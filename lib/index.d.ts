@@ -3,4 +3,5 @@
  * @param name The name to greet
  */
 export declare const makeHello: (name?: string) => string;
+export * from "./ecommerce-provider";
 //# sourceMappingURL=index.d.ts.map
