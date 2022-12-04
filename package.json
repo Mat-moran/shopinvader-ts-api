@@ -1,0 +1,40 @@
+{
+  "name": "@4made0/shopinvader-ts-api",
+  "version": "0.0.1",
+  "description": "Package to integrate your front end with shopinvader API using typescript and zod",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mat-moran/shopinvader-ts-api"
+  },
+  "main": "lib/index",
+  "types": "lib/index",
+  "files": [
+    "lib",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "npx tsc -p .",
+    "prepublishOnly": "npm run build"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --cache --fix"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "author": "Amadeo Moran <amadeo.moran@gmail.com> ()",
+  "license": "GNU Affero General Public License v3.0",
+  "devDependencies": {
+    "eslint": "^7.25.0",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.2.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.9",
+    "vitest": "^0.25.3"
+  }
+}
