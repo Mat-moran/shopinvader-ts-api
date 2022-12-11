@@ -14,15 +14,13 @@ export const restHandlers: Array<RestHandler<MockedRequest<DefaultRequestMultipa
     if (partnerEmail === "emptycart@mail.com") {
       return res(ctx.status(200), ctx.json(emptyCart))
     }
+    if (partnerEmail === "failParse@mail.com") {
+      return res(ctx.status(200), ctx.json(invalidCart))
+    }
+    if (partnerEmail === "error404@mail.com") {
+      return res(ctx.status(404), ctx.json(invalidCart))
+    }
     return res(ctx.status(404), ctx.json(validCart))
-  }),
-
-  rest.get('http://localhost:3000/invalidcart/cart/', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(invalidCart))
-  }),
-
-  rest.get('http://localhost:3000/404/cart/', (req, res, ctx) => {
-    return res(ctx.status(404), ctx.json(invalidCart))
   }),
 ]
 
