@@ -116,15 +116,15 @@ const ZLocation = z.object({
   code: z.string(),
 })
 
-const ZAddress = z.object({
+export const ZAddress = z.object({
   id: z.number(),
-  parent_id: z.number(),
+  parent_id: z.union([z.boolean(), z.number()]),
   type: ZAddressType,
   display_name: z.string(),
   name: z.string(),
-  ref: z.string(),
+  ref: z.string().nullable(),
   street: z.string(),
-  street2: z.string().optional(),
+  street2: z.string().nullable(),
   zip: z.string(),
   city: z.string(),
   phone: z.string(),
@@ -135,10 +135,10 @@ const ZAddress = z.object({
   address_type: z.string().optional(),
   is_company: z.boolean().optional(),
   lang: z.string().optional(),
-  title: z.string().optional(),
+  title: z.string().nullable(),
   enabled: z.boolean().optional(),
-  partner_invoice_id: ZDefaultAddress.optional(),
-  partner_delivery_id: ZDefaultAddress.optional(),
+  partner_invoice_id: ZDefaultAddress.nullable(),
+  partner_delivery_id: ZDefaultAddress.nullable(),
 })
 
 
@@ -240,6 +240,7 @@ export type IProductPrice = z.infer<typeof ZProductPrice>
 export type IImageObject = z.infer<typeof ZImageObject>
 export type IImages = z.infer<typeof ZImages>
 export type ICart = z.infer<typeof ZCart>
+export type IAddress = z.infer<typeof ZAddress>
 
 
 
@@ -299,6 +300,10 @@ export interface EcommerceProvider {
   getCart(
     email: string,
   ): Promise<IApiResponse<ICart>>,
+  getAddresses(
+    email: string,
+  ): Promise<IApiResponse<IAddress[]>>,
+
 }
 
 

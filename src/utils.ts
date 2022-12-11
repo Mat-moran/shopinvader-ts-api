@@ -4,6 +4,7 @@ import { IApiResponse } from "./shopinvader-boundary";
 // methods
 export const zodParse = async <K>(schema: ZodSchema, fetchResult: any): Promise<IApiResponse<K>> => {
   const parsedResult = schema.safeParse(fetchResult.data)
+  console.log(parsedResult)
   if (!parsedResult.success) {
     return { success: false, error: parsedResult.error, message: parsedResult.error.message, error_type: "zod" }
   }

@@ -3,7 +3,7 @@ import {
   it,
   expect,
 } from 'vitest'
-import { IAddressType, IApiErrorResponse, IApiSuccessResponse, ICart } from '../src/shopinvader-boundary'
+import { IAddress, IAddressType, IApiErrorResponse, IApiSuccessResponse, ICart } from '../src/shopinvader-boundary'
 import { createShopinvaderProvider } from "../src/shopinvader-provider"
 
 const apiMethodTest = <K>(provider, method) => {
@@ -59,6 +59,7 @@ describe('getCart method', () => {
   })
 
   apiMethodTest<ICart>(provider, "getCart")
+  apiMethodTest<IAddress>(provider, "getAddresses")
 
 
 })
