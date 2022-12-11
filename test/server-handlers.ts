@@ -4,6 +4,11 @@ import validCart from './mockData/validCart.json'
 import invalidCart from './mockData/invalidCart.json'
 import emptyCart from './mockData/emptyCart.json'
 import validAddress from './mockData/addresses/validAddress.json'
+import invalidAddress from './mockData/addresses/invalidAddress.json'
+import emptyAddress from './mockData/addresses/emptyAddress.json'
+import validCustomer from './mockData/customer/validCustomer.json'
+import invalidCustomer from './mockData/customer/invalidCustomer.json'
+import emptyCustomer from './mockData/customer/emptyCustomer.json'
 
 
 export const restHandlers: Array<RestHandler<MockedRequest<DefaultRequestMultipartBody>>> = [
@@ -30,15 +35,32 @@ export const restHandlers: Array<RestHandler<MockedRequest<DefaultRequestMultipa
       return res(ctx.status(200), ctx.json(validAddress))
     }
     if (partnerEmail === "emptycart@mail.com") {
-      return res(ctx.status(200), ctx.json(emptyCart))
+      return res(ctx.status(200), ctx.json(emptyAddress))
     }
     if (partnerEmail === "failParse@mail.com") {
-      return res(ctx.status(200), ctx.json(invalidCart))
+      return res(ctx.status(200), ctx.json(invalidAddress))
     }
     if (partnerEmail === "error404@mail.com") {
-      return res(ctx.status(404), ctx.json(invalidCart))
+      return res(ctx.status(404), ctx.json(invalidAddress))
     }
-    return res(ctx.status(404), ctx.json(validCart))
+    return res(ctx.status(404), ctx.json(validAddress))
+  }),
+
+  rest.get('http://localhost:3000/customer/', (req, res, ctx) => {
+    const partnerEmail = req.headers.get("partner-email")
+    if (partnerEmail === "valid@mail.com") {
+      return res(ctx.status(200), ctx.json(validCustomer))
+    }
+    if (partnerEmail === "emptycart@mail.com") {
+      return res(ctx.status(200), ctx.json(emptyCustomer))
+    }
+    if (partnerEmail === "failParse@mail.com") {
+      return res(ctx.status(200), ctx.json(invalidCustomer))
+    }
+    if (partnerEmail === "error404@mail.com") {
+      return res(ctx.status(404), ctx.json(invalidCustomer))
+    }
+    return res(ctx.status(404), ctx.json(validCustomer))
   }),
 ]
 

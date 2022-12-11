@@ -3,10 +3,10 @@ import {
   it,
   expect,
 } from 'vitest'
-import { IAddress, IAddressType, IApiErrorResponse, IApiSuccessResponse, ICart } from '../src/shopinvader-boundary'
+import { IAddress, IAddressType, IApiErrorResponse, IApiSuccessResponse, ICart, ICustomer } from '../src/shopinvader-boundary'
 import { createShopinvaderProvider } from "../src/shopinvader-provider"
 
-const apiMethodTest = <K>(provider, method) => {
+const apiMethodTest = <K>(provider, method, log = false) => {
   const notEmail = "notEmail"
   const validEmail = "valid@mail.com"
   const invalidEmail = "invalid@mail.com"
@@ -15,34 +15,35 @@ const apiMethodTest = <K>(provider, method) => {
   const error404Email = "error404@mail.com"
 
 
-  it('Non Email parse failed', async () => {
-    const invalidEmailResponse = await provider[method](notEmail) as IApiErrorResponse
-    expect(invalidEmailResponse.success).toBe(false)
-    expect(invalidEmailResponse.error_type).toBe("zod")
+  it('Non Email parse failed ' + method, async () => {
+    const response = await provider[method](notEmail) as IApiErrorResponse
+    expect(response.success).toBe(false)
+    expect(response.error_type).toBe("zod")
   })
-  it('Invalid Email path', async () => {
-    const invalidEmailResponse = await provider[method](invalidEmail) as IApiErrorResponse
-    expect(invalidEmailResponse.success).toBe(false)
-    expect(invalidEmailResponse.error_type).toBe("erp api")
+  it('Invalid Email path ' + method, async () => {
+    const response = await provider[method](invalidEmail) as IApiErrorResponse
+    expect(response.success).toBe(false)
+    expect(response.error_type).toBe("erp api")
   })
-  it('Valid Email Path full cart response', async () => {
-    const validEmailResponse = await provider[method](validEmail) as IApiSuccessResponse<K>
-    expect(validEmailResponse.success).toBe(true)
+  it('Valid Email Path ' + method, async () => {
+    const response = await provider[method](validEmail) as IApiSuccessResponse<K>
+    log ? console.log(response) : null;
+    expect(response.success).toBe(true)
   })
   // Empty cart fetch
-  it('Empty cart response', async () => {
-    const emptycart = await provider[method](emptycartEmail) as IApiErrorResponse
-    expect(emptycart.success).toBe(false)
-    expect(emptycart.error_type).toBe("zod")
+  it('Empty fetch response for ' + method, async () => {
+    const response = await provider[method](emptycartEmail) as IApiErrorResponse
+    expect(response.success).toBe(false)
+    expect(response.error_type).toBe("zod")
   })
   // Invalid cart fetch
-  it('Checking invalid cart parse', async () => {
+  it('Checking invalid fetch data parse for ' + method, async () => {
     const response = await provider[method](failParseEmail) as IApiErrorResponse
     expect(response.success).toBe(false)
     expect(response.error_type).toBe("zod")
   })
   // Error fetching the ERP
-  it('Checking 404 response', async () => {
+  it('Checking 404 response for ' + method, async () => {
     const response = await provider[method](error404Email) as IApiErrorResponse
     expect(response.success).toBe(false)
     expect(response.error_type).toBe("erp api")
@@ -58,8 +59,9 @@ describe('getCart method', () => {
     api_key: "lkasjf",
   })
 
-  apiMethodTest<ICart>(provider, "getCart")
+  apiMethodTest<ICart>(provider, "getCart", true)
   apiMethodTest<IAddress>(provider, "getAddresses")
+  apiMethodTest<ICustomer>(provider, "getCustomer")
 
 
 })
