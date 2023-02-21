@@ -1,9 +1,9 @@
-import { z, ZodError } from "zod"
+import { z, ZodError } from 'zod';
 // Shopinvader interfaces and types definitions to implments on shopinvader-provider
 //
 //
 
-const StringOrFalse = z.string().or(z.literal(false))
+const StringOrFalse = z.string().or(z.literal(false));
 
 //////////////////////
 /// Product model  ///
@@ -14,17 +14,17 @@ const ZProductPrice = z.object({
     value: z.number(),
     tax_included: z.boolean(),
     original_value: z.number(),
-    discount: z.number()
-  })
-})
+    discount: z.number(),
+  }),
+});
 
 const ZImageObject = z.object({
   alt: z.string(),
   src: z.string(),
   tag: z.string(),
-})
+});
 
-const ZImages = z.array(z.record(ZImageObject))
+const ZImages = z.array(z.record(ZImageObject));
 
 const ZCategory = z.object({
   id: z.number(),
@@ -32,29 +32,31 @@ const ZCategory = z.object({
   url_key: z.string(),
   level: z.number(),
   description: z.string(),
-})
+});
 
 const ZVariant = z.object({
   name: z.string(),
   sku: z.string(),
   available: z.boolean(),
   selected: z.boolean(),
-})
+});
 
 const ZVariantSelector = z.object({
   name: z.string(),
-  values: z.array(ZVariant)
-})
+  values: z.array(ZVariant),
+});
 
 const ZStructuredAttribute = z.object({
   group_name: z.string(),
-  fields: z.array(z.object({
-    name: z.string(),
-    key: z.string(),
-    value: z.string(),
-    type: z.string(),
-  }))
-})
+  fields: z.array(
+    z.object({
+      name: z.string(),
+      key: z.string(),
+      value: z.string(),
+      type: z.string(),
+    })
+  ),
+});
 
 const ZProduct = z.object({
   id: z.number(),
@@ -83,9 +85,11 @@ const ZProduct = z.object({
     material1: z.number().optional(),
   }),
   structured_attributes: z.array(ZStructuredAttribute),
-  attribute_set: z.object({
-    name: z.string(),
-  }).nullable(),
+  attribute_set: z
+    .object({
+      name: z.string(),
+    })
+    .nullable(),
   images: ZImages,
   stock: z.object({
     global: z.object({
@@ -98,27 +102,24 @@ const ZProduct = z.object({
   price: ZProductPrice,
   website_category_id: z.string(),
   only_quotation: z.boolean(),
-
-})
-
-
+});
 
 //////////////////////
 /// Address model  ///
 //////////////////////
 // Zod objects to parse the incoming data from the API
-const ZAddressType = z.enum(["invoice", "delivery", "contact"]);
+const ZAddressType = z.enum(['invoice', 'delivery', 'contact']);
 
 const ZDefaultAddress = z.object({
   id: z.number(),
-  display_name: z.string()
-})
+  display_name: z.string(),
+});
 
 const ZLocation = z.object({
   id: z.number(),
   name: z.string(),
   code: z.string(),
-})
+});
 
 export const ZAddress = z.object({
   id: z.number(),
@@ -143,8 +144,7 @@ export const ZAddress = z.object({
   enabled: z.boolean().optional(),
   partner_invoice_id: ZDefaultAddress.nullable(),
   partner_delivery_id: ZDefaultAddress.nullable(),
-})
-
+});
 
 //////////////////////
 /// Partner model  ///
@@ -158,7 +158,7 @@ const ZCommercial = z.object({
   phone: z.union([z.string(), z.boolean()]),
   mobile: z.union([z.string(), z.boolean()]),
   photo: z.string(),
-})
+});
 
 export const ZCustomer = z.object({
   id: z.number(),
@@ -185,9 +185,27 @@ export const ZCustomer = z.object({
   enabled: z.boolean(),
   partner_invoice_id: ZDefaultAddress.nullable(),
   partner_delivery_id: ZDefaultAddress.nullable(),
-  logo: z.string()
-})
+  logo: z.string(),
+});
 
+export const ZPicking = z.object({
+  picking: z.object({
+    id: z.number(),
+    name: z.string(),
+  }),
+  product: z.object({ id: z.number(), name: z.string() }),
+  package: z.union([z.string(), z.boolean()]),
+  date: z.string(),
+  description: z.string(),
+  order: z.object({
+    id: z.number(),
+    name: z.string(),
+    client_ref: z.union([z.string(), z.boolean()]),
+  }),
+  qty_reserved: z.number(),
+  qty_done: z.number(),
+  dm_picking_status: z.object({ code: z.string(), name: z.string() }),
+});
 
 // Typescript types and interfaces
 
@@ -208,13 +226,13 @@ export const ZCartItem = z.object({
   amount: z.object({
     tax: z.number(),
     untaxed: z.number(),
-    total: z.number()
+    total: z.number(),
   }),
   qty: z.number(),
   discount: z.object({ rate: z.number(), value: z.number() }),
   is_reward_line: z.boolean(),
-  product_packaging: z.object({ id: z.string(), name: z.string() }),// TODO id here should be number --> needs modification in odoo
-})
+  product_packaging: z.object({ id: z.string(), name: z.string() }), // TODO id here should be number --> needs modification in odoo
+});
 
 export const ZCart = z.object({
   id: z.number(),
@@ -232,14 +250,14 @@ export const ZCart = z.object({
     amount: z.object({
       tax: z.number(),
       untaxed: z.number(),
-      total: z.number()
-    })
+      total: z.number(),
+    }),
   }),
   shipping: z.object({
-    address: ZAddress
+    address: ZAddress,
   }),
   invoicing: z.object({
-    address: ZAddress
+    address: ZAddress,
   }),
   amount: z.object({
     untaxed: z.number(),
@@ -247,16 +265,20 @@ export const ZCart = z.object({
     total: z.number(),
     total_without_discount: z.number(),
   }),
-  discount: z.object({
-    rate: z.number(),
-    value: z.number(),
-  }).optional(),
-  product_packaging: z.object({
-    id: z.number(),
-    name: z.string(),
-    price_unit: z.number(),
-  }).optional()
-})
+  discount: z
+    .object({
+      rate: z.number(),
+      value: z.number(),
+    })
+    .optional(),
+  product_packaging: z
+    .object({
+      id: z.number(),
+      name: z.string(),
+      price_unit: z.number(),
+    })
+    .optional(),
+});
 
 // {
 //   "data": {
@@ -546,17 +568,15 @@ export const ZCart = z.object({
 //   }
 // }
 
-
 // typescript infered types
-export type IAddressType = z.infer<typeof ZAddressType>
-export type IProductPrice = z.infer<typeof ZProductPrice>
-export type IImageObject = z.infer<typeof ZImageObject>
-export type IImages = z.infer<typeof ZImages>
-export type ICart = z.infer<typeof ZCart>
-export type IAddress = z.infer<typeof ZAddress>
-export type ICustomer = z.infer<typeof ZCustomer>
-
-
+export type IAddressType = z.infer<typeof ZAddressType>;
+export type IProductPrice = z.infer<typeof ZProductPrice>;
+export type IImageObject = z.infer<typeof ZImageObject>;
+export type IImages = z.infer<typeof ZImages>;
+export type ICart = z.infer<typeof ZCart>;
+export type IAddress = z.infer<typeof ZAddress>;
+export type ICustomer = z.infer<typeof ZCustomer>;
+export type IPicking = z.infer<typeof ZPicking>;
 
 export interface ICarouselItem {
   id: number;
@@ -565,7 +585,6 @@ export interface ICarouselItem {
   image_src: string | null;
   image_alt: string | null;
 }
-
 
 export interface ILinesItem {
   amount: {
@@ -584,7 +603,7 @@ export interface ILinesItem {
     id: number;
     name: string;
     price_unit: number;
-  }
+  };
 }
 
 export interface ILines {
@@ -606,24 +625,12 @@ export interface ICoupon {
   count: number;
 }
 
-
-
-
-
 export interface EcommerceProvider {
-  getCart(
-    email: string,
-  ): Promise<IApiResponse<ICart>>,
-  getAddresses(
-    email: string,
-  ): Promise<IApiResponse<IAddress[]>>,
-  getCustomer(
-    email: string,
-  ): Promise<IApiResponse<ICustomer>>,
+  getCart(email: string): Promise<IApiResponse<ICart>>;
+  getAddresses(email: string): Promise<IApiResponse<IAddress[]>>;
+  getCustomer(email: string): Promise<IApiResponse<ICustomer>>;
+  getPickings(email: string): Promise<IApiResponse<IPicking[]>>;
 }
-
-
-
 
 export interface ShopinvaderProviderBaseOptions {
   website_unique_id: string;
@@ -633,22 +640,22 @@ export interface PublicShopinvaderFetchOptions {
   erp_url_base_url: string;
 }
 
-export interface PrivateShopinvaderFetchOptions extends ShopinvaderProviderBaseOptions {
+export interface PrivateShopinvaderFetchOptions
+  extends ShopinvaderProviderBaseOptions {
   email: string;
 }
 
-
 // Discriminated global Generic responses
-export type IApiResponse<DataType> = IApiErrorResponse | IApiSuccessResponse<DataType>
+export type IApiResponse<DataType> =
+  | IApiErrorResponse
+  | IApiSuccessResponse<DataType>;
 export interface IApiSuccessResponse<DataType> {
   success: true;
-  data: DataType
+  data: DataType;
 }
 export interface IApiErrorResponse {
-  error_type: "zod" | "erp api"
+  error_type: 'zod' | 'erp api';
   success: false;
   error: ZodError | number;
   message: string;
 }
-
-
