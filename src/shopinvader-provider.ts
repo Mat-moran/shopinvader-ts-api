@@ -27,7 +27,7 @@ export function createShopinvaderProvider({
       if (parsedEmail.success === false) {
         return { message: "Error", success: false, error: parsedEmail.error, error_type: "zod" }
       }
-      const res = await fetch(erp_url_base_url + 'cart/', fetchOptions({ website_unique_id: website_unique_id, api_key: api_key, email: parsedEmail.data }))
+      const res = await fetch(erp_url_base_url + '/cart/', fetchOptions({ website_unique_id: website_unique_id, api_key: api_key, email: parsedEmail.data }))
       // logica de errores al fechear la API, 200, 304, 400, 500
       if (res.ok) {
         return zodParse<ICart>(ZCart, await res.json())
@@ -40,7 +40,7 @@ export function createShopinvaderProvider({
       if (parsedEmail.success === false) {
         return { message: "Error", success: false, error: parsedEmail.error, error_type: "zod" }
       }
-      const res = await fetch(erp_url_base_url + 'addresses/', fetchOptions({ website_unique_id: website_unique_id, api_key: api_key, email: parsedEmail.data }))
+      const res = await fetch(erp_url_base_url + '/addresses/', fetchOptions({ website_unique_id: website_unique_id, api_key: api_key, email: parsedEmail.data }))
       // logica de errores al fechear la API, 200, 304, 400, 500
       if (res.ok) {
         return zodParse<IAddress[]>(z.array(ZAddress), await res.json())
@@ -53,7 +53,7 @@ export function createShopinvaderProvider({
       if (parsedEmail.success === false) {
         return { message: "Error", success: false, error: parsedEmail.error, error_type: "zod" }
       }
-      const res = await fetch(erp_url_base_url + 'customer/', fetchOptions({ website_unique_id: website_unique_id, api_key: api_key, email: parsedEmail.data }))
+      const res = await fetch(erp_url_base_url + '/customer/', fetchOptions({ website_unique_id: website_unique_id, api_key: api_key, email: parsedEmail.data }))
       // logica de errores al fechear la API, 200, 304, 400, 500
       if (res.ok) {
         return zodParse<ICustomer>(ZCustomer, await res.json())
