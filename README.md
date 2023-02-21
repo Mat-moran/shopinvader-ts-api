@@ -1,3 +1,36 @@
+# ¿Como usar?
+
+- Para poder utilizar la libreria de shopinvader debemos clonar el repositorio dentro de nuestro proyecto.
+
+- Una vez clonado el repositorio, instalamos el paquete y las dependencias necesarias. 
+
+- Configuramos el entorno para añadir los datos de url base, api key y unique key.
+
+- Con todo configurado podremos instanciar nuestra clase para poder acceder a los métodos disponibles.
+
+```
+git clone https://github.com/dm-integrations/shopinvader-ts-api.git
+npm install ./shopinvader-ts-api.git
+npm install
+```
+
+## Ejemplo método instanciar provider 
+
+```
+import { createShopinvaderProvider } from "shopinvader-ts-api/src";
+
+export const setProvider = () => {
+  const provider = createShopinvaderProvider({
+    erp_url_base_url: process.env.SHOPINVADER_BASE_URL_DEV as string,
+    website_unique_id: process.env.SHOPINVADER_WEBSITE_UNIQUE_KEY as string,
+    api_key: process.env.SHOPINVADER_API_KEY as string,
+  });
+
+  return provider;
+};
+
+```
+
 # NPM Package Template
 
 This is a template NPM package repository. Get started with the following commands:
