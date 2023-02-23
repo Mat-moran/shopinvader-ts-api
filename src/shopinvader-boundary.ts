@@ -162,7 +162,7 @@ const ZCommercial = z.object({
 
 export const ZCustomer = z.object({
   id: z.number(),
-  parent_id: z.boolean().nullable(),
+  parent_id: z.union([z.number(), z.boolean()]),
   commercial: ZCommercial,
   type: ZAddressType,
   display_name: z.string(),
@@ -194,9 +194,12 @@ export const ZPicking = z.object({
     name: z.string(),
   }),
   product: z.object({ id: z.number(), name: z.string() }),
-  package: z.union([z.string(), z.boolean()]),
+  package: z.union([
+    z.object({ id: z.number(), name: z.string() }),
+    z.boolean(),
+  ]),
   date: z.string(),
-  description: z.string(),
+  description: z.union([z.string(), z.boolean()]),
   order: z.object({
     id: z.number(),
     name: z.string(),
@@ -205,6 +208,57 @@ export const ZPicking = z.object({
   qty_reserved: z.number(),
   qty_done: z.number(),
   dm_picking_status: z.object({ code: z.string(), name: z.string() }),
+});
+
+export const ZLinesItem = z.object({
+  id: z.number(),
+  name: z.string(),
+  product: z.object({ id: z.number(), name: z.string() }),
+  amount: z.object({
+    price: z.number(),
+    untaxed: z.number(),
+    tax: z.number(),
+    total: z.number(),
+    total_without_discount: z.number(),
+  }),
+  qty: z.number(),
+  discount: z.object({
+    rate: z.number(),
+    value: z.number(),
+  }),
+  product_packaging: z.object({
+    id: z.number(),
+    name: z.string(),
+    qty: z.number(),
+    uom_id: z.number(),
+  }),
+});
+
+export const ZLines = z.object({
+  items: z.array(ZLinesItem),
+  count: z.number(),
+  amount: z.object({
+    tax: z.number(),
+    untaxed: z.number(),
+    total: z.number(),
+  }),
+});
+
+export const ZSale = z.object({
+  id: z.number(),
+  date: z.string(),
+  amount: z.object({
+    tax: z.number(),
+    untaxed: z.number(),
+    total: z.number(),
+    discount_total: z.number(),
+    total_without_discount: z.number(),
+  }),
+  name: z.string(),
+  state_label: z.string(),
+  client_order_ref: z.union([z.string(), z.boolean()]),  
+  invoice_status: z.string(),
+  picking_status: z.string(), 
 });
 
 // Typescript types and interfaces
@@ -280,294 +334,6 @@ export const ZCart = z.object({
     .optional(),
 });
 
-// {
-//   "data": {
-//     "id": 1745,
-//     "state": "pending",
-//     "state_label": "Pending",
-//     "name": "S01745",
-//     "date": "2022-10-03T18:40:11",
-//     "date_delivery": false,
-//     "client_order_ref": false,
-//     "step": {
-//       "current": false,
-//       "done": []
-//     },
-//     "lines": {
-//       "items": [],
-//       "count": 0,
-//       "amount": {
-//         "tax": 0,
-//         "untaxed": 0,
-//         "total": 0
-//       }
-//     },
-//     "amount": {
-//       "tax": 0.0,
-//       "untaxed": 0.0,
-//       "total": 0.0,
-//       "discount_total": 0.0,
-//       "total_without_discount": 0.0
-//     },
-//     "shipping": {
-//       "address": {
-//         "id": 112,
-//         "parent_id": 52,
-//         "type": "invoice",
-//         "display_name": "pepito manoliooo, amade",
-//         "name": "amade",
-//         "ref": null,
-//         "street": "c. Madroñoso 14, 4",
-//         "street2": null,
-//         "zip": "89500",
-//         "city": "Badalona",
-//         "phone": "672979223",
-//         "email": "ama2@gmail.com",
-//         "function": null,
-//         "opt_in": true,
-//         "opt_out": false,
-//         "vat": "ES25342442F",
-//         "state": {
-//           "id": 417,
-//           "name": "A Coruña (La Coruña)",
-//           "code": "C"
-//         },
-//         "country": {
-//           "id": 68,
-//           "name": "Spain",
-//           "code": "ES"
-//         },
-//         "address_type": "address",
-//         "is_company": false,
-//         "lang": "es_ES",
-//         "title": null,
-//         "enabled": true,
-//         "industry_id": null,
-//         "partner_invoice_id": null,
-//         "partner_delivery_id": null,
-//         "access": {
-//           "read": true,
-//           "update": true,
-//           "delete": true
-//         }
-//       }
-//     },
-//     "invoicing": {
-//       "address": {
-//         "id": 52,
-//         "parent_id": false,
-//         "type": "invoice",
-//         "display_name": "pepito manoliooo",
-//         "name": "pepito manoliooo",
-//         "ref": null,
-//         "street": "tk",
-//         "street2": null,
-//         "zip": "29200",
-//         "city": "Antq",
-//         "phone": "6729792",
-//         "email": "amadeo.moran@gmail.com",
-//         "function": null,
-//         "opt_in": true,
-//         "opt_out": false,
-//         "vat": "ES25342442F",
-//         "state": {
-//           "id": 68,
-//           "name": "Armed Forces Americas",
-//           "code": "AA"
-//         },
-//         "country": {
-//           "id": 68,
-//           "name": "Spain",
-//           "code": "ES"
-//         },
-//         "address_type": "profile",
-//         "is_company": false,
-//         "lang": "es_ES",
-//         "title": null,
-//         "enabled": true,
-//         "industry_id": null,
-//         "partner_invoice_id": null,
-//         "partner_delivery_id": {
-//           "id": 112,
-//           "display_name": "pepito manoliooo, amade"
-//         },
-//         "access": {
-//           "read": true,
-//           "update": true,
-//           "delete": true
-//         }
-//       }
-//     },
-//     "expiration_date": "2022-12-05T15:20:12.099098",
-//     "promo_code": false,
-//     "reward_amount": 0.0,
-//     "reward_amount_tax_incl": 0.0,
-//     "applied_coupon_ids": {
-//       "items": [],
-//       "count": 0
-//     },
-//     "generated_coupon_ids": {
-//       "items": [],
-//       "count": 0
-//     },
-//     "no_code_promo_program_ids": {
-//       "items": [],
-//       "count": 0
-//     },
-//     "code_promo_program_id": false,
-//     "available_for_quotation": true,
-//     "payment_info": {
-//       "payment_term": false,
-//       "payment_mode": false
-//     }
-//   },
-//   "set_session": {
-//     "cart_id": 1745
-//   },
-//   "store_cache": {
-//     "cart": {
-//       "id": 1745,
-//       "state": "pending",
-//       "state_label": "Pending",
-//       "name": "S01745",
-//       "date": "2022-10-03T18:40:11",
-//       "date_delivery": false,
-//       "client_order_ref": false,
-//       "step": {
-//         "current": false,
-//         "done": []
-//       },
-//       "lines": {
-//         "items": [],
-//         "count": 0,
-//         "amount": {
-//           "tax": 0,
-//           "untaxed": 0,
-//           "total": 0
-//         }
-//       },
-//       "amount": {
-//         "tax": 0.0,
-//         "untaxed": 0.0,
-//         "total": 0.0,
-//         "discount_total": 0.0,
-//         "total_without_discount": 0.0
-//       },
-//       "shipping": {
-//         "address": {
-//           "id": 112,
-//           "parent_id": 52,
-//           "type": "invoice",
-//           "display_name": "pepito manoliooo, amade",
-//           "name": "amade",
-//           "ref": null,
-//           "street": "c. Madroñoso 14, 4",
-//           "street2": null,
-//           "zip": "89500",
-//           "city": "Badalona",
-//           "phone": "672979223",
-//           "email": "ama2@gmail.com",
-//           "function": null,
-//           "opt_in": true,
-//           "opt_out": false,
-//           "vat": "ES25342442F",
-//           "state": {
-//             "id": 417,
-//             "name": "A Coruña (La Coruña)",
-//             "code": "C"
-//           },
-//           "country": {
-//             "id": 68,
-//             "name": "Spain",
-//             "code": "ES"
-//           },
-//           "address_type": "address",
-//           "is_company": false,
-//           "lang": "es_ES",
-//           "title": null,
-//           "enabled": true,
-//           "industry_id": null,
-//           "partner_invoice_id": null,
-//           "partner_delivery_id": null,
-//           "access": {
-//             "read": true,
-//             "update": true,
-//             "delete": true
-//           }
-//         }
-//       },
-//       "invoicing": {
-//         "address": {
-//           "id": 52,
-//           "parent_id": false,
-//           "type": "invoice",
-//           "display_name": "pepito manoliooo",
-//           "name": "pepito manoliooo",
-//           "ref": null,
-//           "street": "tk",
-//           "street2": null,
-//           "zip": "29200",
-//           "city": "Antq",
-//           "phone": "6729792",
-//           "email": "amadeo.moran@gmail.com",
-//           "function": null,
-//           "opt_in": true,
-//           "opt_out": false,
-//           "vat": "ES25342442F",
-//           "state": {
-//             "id": 68,
-//             "name": "Armed Forces Americas",
-//             "code": "AA"
-//           },
-//           "country": {
-//             "id": 68,
-//             "name": "Spain",
-//             "code": "ES"
-//           },
-//           "address_type": "profile",
-//           "is_company": false,
-//           "lang": "es_ES",
-//           "title": null,
-//           "enabled": true,
-//           "industry_id": null,
-//           "partner_invoice_id": null,
-//           "partner_delivery_id": {
-//             "id": 112,
-//             "display_name": "pepito manoliooo, amade"
-//           },
-//           "access": {
-//             "read": true,
-//             "update": true,
-//             "delete": true
-//           }
-//         }
-//       },
-//       "expiration_date": "2022-12-05T15:20:12.099098",
-//       "promo_code": false,
-//       "reward_amount": 0.0,
-//       "reward_amount_tax_incl": 0.0,
-//       "applied_coupon_ids": {
-//         "items": [],
-//         "count": 0
-//       },
-//       "generated_coupon_ids": {
-//         "items": [],
-//         "count": 0
-//       },
-//       "no_code_promo_program_ids": {
-//         "items": [],
-//         "count": 0
-//       },
-//       "code_promo_program_id": false,
-//       "available_for_quotation": true,
-//       "payment_info": {
-//         "payment_term": false,
-//         "payment_mode": false
-//       }
-//     }
-//   }
-// }
-
 // typescript infered types
 export type IAddressType = z.infer<typeof ZAddressType>;
 export type IProductPrice = z.infer<typeof ZProductPrice>;
@@ -577,6 +343,7 @@ export type ICart = z.infer<typeof ZCart>;
 export type IAddress = z.infer<typeof ZAddress>;
 export type ICustomer = z.infer<typeof ZCustomer>;
 export type IPicking = z.infer<typeof ZPicking>;
+export type ISale = z.infer<typeof ZSale>;
 
 export interface ICarouselItem {
   id: number;
@@ -630,6 +397,7 @@ export interface EcommerceProvider {
   getAddresses(email: string): Promise<IApiResponse<IAddress[]>>;
   getCustomer(email: string): Promise<IApiResponse<ICustomer>>;
   getPickings(email: string): Promise<IApiResponse<IPicking[]>>;
+  getSales(email: string): Promise<IApiResponse<ISale[]>>;
 }
 
 export interface ShopinvaderProviderBaseOptions {

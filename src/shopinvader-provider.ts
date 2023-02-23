@@ -13,7 +13,100 @@ import {
   ICustomer,
   IPicking,
   ZPicking,
+  ISale,
+  ZSale,
 } from './shopinvader-boundary';
+
+// Types and interfaces
+
+export interface IPickingLoader {
+  picking: {
+    id: number;
+    name: string;
+  };
+  product: {
+    id: number;
+    name: string;
+  };
+  package?: {
+    id: number;
+    name: string;
+  };
+  order?: {
+    id: number;
+    name: string;
+    client_ref: string;
+  };
+  date: Date;
+  description: string;
+  origin: string;
+  qty_reserved: number;
+  qty_done: number;
+  dm_picking_status: {
+    code: string;
+    name: string;
+  };
+}
+
+export interface ILinesItem {
+  id: number;
+  name: string;
+  product: IProductItem;
+  amount: {
+    price: number;
+    untaxed: number;
+    tax: number;
+    total: number;
+    total_without_discount: number;
+  };
+  qty: number;
+  discount: {
+    rate: number;
+    value: number;
+  };
+  product_packaging: {
+    id: number;
+    name: string;
+    qty: number;
+    uom_id: string;
+  };
+}
+
+export interface ILines {
+  items: ILinesItem[];
+  count: number;
+  amount: {
+    tax: number;
+    untaxed: number;
+    total: number;
+  };
+}
+
+export interface ISaleLoader {
+  id: number;
+  date: Date;
+  amount: {
+    tax: number;
+    untaxed: number;
+    total: number;
+    discount_total: number;
+    total_without_discount: number;
+  };
+  shipping: {
+    address: IAddress;
+  };
+  invoicing: {
+    address: IAddress;
+  };
+  name: string;
+  state_label: string;
+  client_order_ref: string;
+  qty: number;
+  lines: ILines;
+  invoice_status: string;
+  picking_status: string;
+  invoices: { id: number; name: string; date: string }[];
+}
 
 // the implementation of the types of general purpose ecommerce-provider
 export function createShopinvaderProvider({
@@ -49,7 +142,7 @@ export function createShopinvaderProvider({
         };
       }
       const res = await fetch(
-        erp_url_base_url + '/cart/',
+        erp_url_base_url + '/cart',
         fetchOptions({
           website_unique_id: website_unique_id,
           api_key: api_key,
@@ -109,13 +202,14 @@ export function createShopinvaderProvider({
         };
       }
       const res = await fetch(
-        erp_url_base_url + '/customer/',
+        erp_url_base_url + '/customer',
         fetchOptions({
           website_unique_id: website_unique_id,
           api_key: api_key,
           email: parsedEmail.data,
         })
       );
+      console.log('resultado-->', res.status);
       // logica de errores al fechear la API, 200, 304, 400, 500
       if (res.ok) {
         return zodParse<ICustomer>(ZCustomer, await res.json());
@@ -140,7 +234,7 @@ export function createShopinvaderProvider({
       }
 
       const res = await fetch(
-        erp_url_base_url + '/stock_move',
+        erp_url_base_url + '/stock_move?per_page=500',
         fetchOptions({
           website_unique_id: website_unique_id,
           api_key: api_key,
@@ -148,10 +242,40 @@ export function createShopinvaderProvider({
         })
       );
 
-      console.log('ERROR---->', res);
       // logica de errores al fechear la API, 200, 304, 400, 500
       if (res.ok) {
         return zodParse<IPicking[]>(z.array(ZPicking), await res.json());
+      } else {
+        return {
+          message: 'Error al tratar de conectar con el ERP',
+          success: res.ok,
+          error: res.status,
+          error_type: 'erp api',
+        };
+      }
+    },
+    getSales: async (email: string) => {
+      const parsedEmail = z.string().email().safeParse(email);
+      if (parsedEmail.success === false) {
+        return {
+          message: 'Error',
+          success: false,
+          error: parsedEmail.error,
+          error_type: 'zod',
+        };
+      }
+      const res = await fetch(
+        erp_url_base_url + '/sales?per_page=500',
+        fetchOptions({
+          website_unique_id: website_unique_id,
+          api_key: api_key,
+          email: parsedEmail.data,
+        })
+      );
+      // logica de errores al fechear la API, 200, 304, 400, 500
+      if (res.ok) {
+        console.log('respuestaAPI-->', res);
+        return zodParse<ISale[]>(z.array(ZSale), await res.json());
       } else {
         return {
           message: 'Error al tratar de conectar con el ERP',
