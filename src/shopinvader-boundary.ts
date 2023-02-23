@@ -256,9 +256,29 @@ export const ZSale = z.object({
   }),
   name: z.string(),
   state_label: z.string(),
-  client_order_ref: z.union([z.string(), z.boolean()]),  
+  client_order_ref: z.union([z.string(), z.boolean()]),
   invoice_status: z.string(),
-  picking_status: z.string(), 
+  picking_status: z.string(),
+});
+
+export const ZInvoice = z.object({
+  invoice_id: z.number(),
+  number: z.string(),
+  payment_reference: z.string(),
+  date_invoice: z.string(),
+  date_due: z.string(),
+  amount_total: z.number(),
+  amount_total_signed: z.number(),
+  amount_tax: z.number(),
+  amount_untaxed: z.number(),
+  amount_untaxed_signed: z.number(),
+  state: z.string(),
+  payment_state: z.string(),
+  type: z.string(),
+  amount_due: z.number(),
+  type_label: z.string(),
+  state_label: z.string(),
+  payment_state_label: z.string(),
 });
 
 // Typescript types and interfaces
@@ -344,6 +364,7 @@ export type IAddress = z.infer<typeof ZAddress>;
 export type ICustomer = z.infer<typeof ZCustomer>;
 export type IPicking = z.infer<typeof ZPicking>;
 export type ISale = z.infer<typeof ZSale>;
+export type IInvoice = z.infer<typeof ZInvoice>;
 
 export interface ICarouselItem {
   id: number;
@@ -398,6 +419,7 @@ export interface EcommerceProvider {
   getCustomer(email: string): Promise<IApiResponse<ICustomer>>;
   getPickings(email: string): Promise<IApiResponse<IPicking[]>>;
   getSales(email: string): Promise<IApiResponse<ISale[]>>;
+  getInvoices(email: string): Promise<IApiResponse<IInvoice[]>>;
 }
 
 export interface ShopinvaderProviderBaseOptions {
