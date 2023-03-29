@@ -1,6 +1,6 @@
 import { makeDomainFunction, inputFromForm } from 'domain-functions'
 import { z, ZodSchema, ZodError } from 'zod';
-import { zodParse } from './utils';
+import { fetch_endpoint, zodParse } from './utils';
 import {
   ICart,
   EcommerceProvider,
@@ -135,29 +135,20 @@ export function createShopinvaderProvider({
 
   return {
     getCart: async (email: string, schema: ZodSchema) => {
-      const fetch_cart = makeDomainFunction(z.string().email())(
-        // toda la logica de error en el fetch aqui!
-        async (email) => {
-          const res = await fetch(
-            erp_url_base_url + '/cart' + '/',
-            fetchOptions({
-              website_unique_id: website_unique_id,
-              api_key: api_key,
-              email: email,
-            })
-          );
-          if (!res.ok) {
-            throw new Error('Some error')
-          }
-          return res
-        })
+      const url = erp_url_base_url + '/cart' + '/'
+      const fetch_options = fetchOptions({
+        website_unique_id: website_unique_id,
+        api_key: api_key,
+        email: email,
+      })
       const parse_cart_data = makeDomainFunction(schema)((data) => {
         return data
       })
       const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
         return data
       })
-      const result = await fetch_cart(email)
+
+      const result = await fetch_endpoint(email, url, fetch_options)
       if (!result.success) {
         return result;
       }
@@ -169,29 +160,20 @@ export function createShopinvaderProvider({
       return parse_cart_data(data);
     },
     getAddresses: async (email: string, schema: ZodSchema) => {
-      const fetch_cart = makeDomainFunction(z.string().email())(
-        // toda la logica de error en el fetch aqui!
-        async (email) => {
-          const res = await fetch(
-            erp_url_base_url + '/addresses' + '/',
-            fetchOptions({
-              website_unique_id: website_unique_id,
-              api_key: api_key,
-              email: email,
-            })
-          );
-          if (!res.ok) {
-            throw new Error('Some error')
-          }
-          return res
-        })
+      const url = erp_url_base_url + '/addresses' + '/'
+      const fetch_options = fetchOptions({
+        website_unique_id: website_unique_id,
+        api_key: api_key,
+        email: email,
+      })
       const parse_cart_data = makeDomainFunction(schema)((data) => {
         return data
       })
       const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
         return data
       })
-      const result = await fetch_cart(email)
+
+      const result = await fetch_endpoint(email, url, fetch_options)
       if (!result.success) {
         return result;
       }
@@ -204,29 +186,21 @@ export function createShopinvaderProvider({
 
     },
     getCustomer: async (email: string, schema: ZodSchema) => {
-      const fetch_cart = makeDomainFunction(z.string().email())(
-        // toda la logica de error en el fetch aqui!
-        async (email) => {
-          const res = await fetch(
-            erp_url_base_url + '/customer' + '/',
-            fetchOptions({
-              website_unique_id: website_unique_id,
-              api_key: api_key,
-              email: email,
-            })
-          );
-          if (!res.ok) {
-            throw new Error('Some error')
-          }
-          return res
-        })
+      const url = erp_url_base_url + '/customer' + '/'
+      const fetch_options = fetchOptions({
+        website_unique_id: website_unique_id,
+        api_key: api_key,
+        email: email,
+      })
+
       const parse_cart_data = makeDomainFunction(schema)((data) => {
         return data
       })
       const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
         return data
       })
-      const result = await fetch_cart(email)
+      // const result = await fetch_cart(email)
+      const result = await fetch_endpoint(email, url, fetch_options)
       if (!result.success) {
         return result;
       }
@@ -271,34 +245,24 @@ export function createShopinvaderProvider({
       }
     },
     getSales: async (email: string, schema: ZodSchema) => {
-      const fetch_cart = makeDomainFunction(z.string().email())(
-        // toda la logica de error en el fetch aqui!
-        async (email) => {
-          const res = await fetch(
-            erp_url_base_url + '/sales' + '/',
-            fetchOptions({
-              website_unique_id: website_unique_id,
-              api_key: api_key,
-              email: email,
-            })
-          );
-          if (!res.ok) {
-            throw new Error('Some error')
-          }
-          return res
-        })
+      const url = erp_url_base_url + '/sales' + '/'
+      const fetch_options = fetchOptions({
+        website_unique_id: website_unique_id,
+        api_key: api_key,
+        email: email,
+      })
       const parse_cart_data = makeDomainFunction(schema)((data) => {
         return data
       })
       const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
         return data
       })
-      const result = await fetch_cart(email)
+
+      const result = await fetch_endpoint(email, url, fetch_options)
       if (!result.success) {
         return result;
       }
       const data = await result.data.json()
-      console.log('response inside getSales: \n\n\n', data)
       if (!data?.data) {
         return parse_empty_cart(data)
       }

@@ -35,7 +35,7 @@ const get_fetch_options = ({
 };
 
 
-const fetch_endpoint = async (email: string, endpoint: string, fetch_options: typeof get_fetch_options) => {
+export const fetch_endpoint = async (email: string, endpoint: string, fetch_options: typeof get_fetch_options) => {
   const result = makeDomainFunction(z.string().email())(
     // toda la logica de error en el fetch aqui!
     async (email) => {
@@ -48,4 +48,6 @@ const fetch_endpoint = async (email: string, endpoint: string, fetch_options: ty
       }
       return res
     })
+
+  return result(email)
 }

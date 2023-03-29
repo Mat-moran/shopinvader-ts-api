@@ -100,14 +100,14 @@ describe('getAddress method', () => {
 })
 
 describe('getCustomer method', () => {
-  const valid_customer_schema = z.object({ data: z.array(z.object({ id: z.number() })) })
+  const valid_customer_schema = z.object({ data: z.object({ id: z.number() }) })
   const invalid_customer_schema = z.object({ data: z.object({ name: z.string(), idssss: z.string() }) })
   const provider = createShopinvaderProvider({
     erp_url_base_url: 'http://localhost:3000' as string,
     website_unique_id: 'alsf',
     api_key: "lkasjf",
   })
-  apiMethodTest(provider, "getAddresses", valid_customer_schema, invalid_customer_schema)
+  apiMethodTest(provider, "getCustomer", valid_customer_schema, invalid_customer_schema)
 
 })
 
