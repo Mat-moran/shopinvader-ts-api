@@ -134,10 +134,11 @@ export function createShopinvaderProvider({
   };
 
   return {
-    getCart: async (email: string, schema: any) => {
+    getCart: async (email: string, schema: ZodSchema) => {
       const fetch_cart = makeDomainFunction(z.string().email())(
-        (email) => {
-          const res = fetch(
+        // toda la logica de error en el fetch aqui!
+        async (email) => {
+          const res = await fetch(
             erp_url_base_url + '/cart' + '/',
             fetchOptions({
               website_unique_id: website_unique_id,
@@ -145,6 +146,9 @@ export function createShopinvaderProvider({
               email: email,
             })
           );
+          if (!res.ok) {
+            throw new Error('Some error')
+          }
           return res
         })
       const parse_cart_data = makeDomainFunction(schema)((data) => {
@@ -153,20 +157,9 @@ export function createShopinvaderProvider({
       const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
         return data
       })
-
-
       const result = await fetch_cart(email)
-      console.log('result ---> ', result)
       if (!result.success) {
         return result;
-      }
-      if (result.data.status === 404) {
-        return {
-          success: false,
-          inputErrors: [],
-          environmentErrors: [{ 'message': "Unable to reach the endpoint /cart/" }],
-          errors: [],
-        }
       }
       const data = await result.data.json()
       if (!data?.data) {

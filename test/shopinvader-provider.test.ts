@@ -27,9 +27,9 @@ const apiMethodTest = <K>(provider, method, log = false) => {
   it('Invalid Email path ' + method, async () => {
     const response = await provider[method](invalidEmail, z.object({ name: z.string() }))
     expect(response.success).toBe(false)
-    expect(response.errors).toStrictEqual([])
+    expect(response.errors[0]).toHaveProperty('message')
     expect(response.inputErrors).toStrictEqual([])
-    expect(response.environmentErrors[0]).toHaveProperty('message')
+    expect(response.environmentErrors).toStrictEqual([])
   })
   it('Valid Email Path ' + method, async () => {
     const response = await provider[method](validEmail, z.object({ data: z.object({ name: z.string() }) }))
@@ -55,6 +55,7 @@ const apiMethodTest = <K>(provider, method, log = false) => {
     // const response = await provider[method](error404Email) as IApiErrorResponse
     console.log(response)
     expect(response.success).toBe(false)
+    expect(response.errors[0]).toHaveProperty('message')
     console.log(response)
     // expect(response.error_type).toBe("erp api")
   })
