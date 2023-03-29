@@ -69,9 +69,6 @@ describe('getCart method', () => {
   })
 
   apiMethodTest(provider, "getCart", valid_cart_schema, invalid_cart_schema)
-  // apiMethodTest<IAddress>(provider, "getAddresses")
-  // apiMethodTest<ICustomer>(provider, "getCustomer")
-
 
 })
 
