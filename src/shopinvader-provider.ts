@@ -144,7 +144,7 @@ export function createShopinvaderProvider({
         };
       }
       const res = await fetch(
-        erp_url_base_url + '/cart',
+        erp_url_base_url + '/cart' + '/',
         fetchOptions({
           website_unique_id: website_unique_id,
           api_key: api_key,
@@ -174,7 +174,7 @@ export function createShopinvaderProvider({
         };
       }
       const res = await fetch(
-        erp_url_base_url + '/addresses/',
+        erp_url_base_url + '/addresses' + '/',
         fetchOptions({
           website_unique_id: website_unique_id,
           api_key: api_key,
@@ -204,7 +204,7 @@ export function createShopinvaderProvider({
         };
       }
       const res = await fetch(
-        erp_url_base_url + '/customer',
+        erp_url_base_url + '/customer' + '/',
         fetchOptions({
           website_unique_id: website_unique_id,
           api_key: api_key,
@@ -235,7 +235,7 @@ export function createShopinvaderProvider({
       }
 
       const res = await fetch(
-        erp_url_base_url + '/stock_move?per_page=500',
+        erp_url_base_url + '/stock_move' + '?per_page=500',
         fetchOptions({
           website_unique_id: website_unique_id,
           api_key: api_key,

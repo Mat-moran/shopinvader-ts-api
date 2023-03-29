@@ -22,6 +22,7 @@ const apiMethodTest = <K>(provider, method, log = false) => {
   })
   it('Invalid Email path ' + method, async () => {
     const response = await provider[method](invalidEmail) as IApiErrorResponse
+    console.log(response)
     expect(response.success).toBe(false)
     expect(response.error_type).toBe("erp api")
   })
@@ -54,7 +55,7 @@ const apiMethodTest = <K>(provider, method, log = false) => {
 describe('getCart method', () => {
   // Valid cart fetch
   const provider = createShopinvaderProvider({
-    erp_url_base_url: 'http://localhost:3000/' as string,
+    erp_url_base_url: 'http://localhost:3000' as string,
     website_unique_id: 'alsf',
     api_key: "lkasjf",
   })
