@@ -1,6 +1,6 @@
 {
   "data": {
-    "id": "just to fail test, can not be an empty customer with a valid email",
+    "id": 54,
     "parent_id": false,
     "type": "contact",
     "display_name": "contacto sin direcciones",

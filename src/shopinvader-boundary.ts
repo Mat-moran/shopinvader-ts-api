@@ -1,4 +1,4 @@
-import { z, ZodError } from 'zod';
+import { z, ZodError, ZodSchema } from 'zod';
 // Shopinvader interfaces and types definitions to implments on shopinvader-provider
 //
 //
@@ -414,12 +414,12 @@ export interface ICoupon {
 }
 
 export interface EcommerceProvider {
-  getCart(email: string): Promise<IApiResponse<ICart>>;
-  getAddresses(email: string): Promise<IApiResponse<IAddress[]>>;
-  getCustomer(email: string): Promise<IApiResponse<ICustomer>>;
-  getPickings(email: string): Promise<IApiResponse<IPicking[]>>;
-  getSales(email: string): Promise<IApiResponse<ISale[]>>;
-  getInvoices(email: string): Promise<IApiResponse<IInvoice[]>>;
+  getCart<T>(email: string, schema: T): Promise<IApiResponse<T>>;
+  getAddresses(email: string, schema: ZodSchema): Promise<IApiResponse<IAddress[]>>;
+  getCustomer(email: string, schema: ZodSchema): Promise<IApiResponse<ICustomer>>;
+  getPickings(email: string, schema: ZodSchema): Promise<IApiResponse<IPicking[]>>;
+  getSales(email: string, schema: ZodSchema): Promise<IApiResponse<ISale[]>>;
+  getInvoices(email: string, schema: ZodSchema): Promise<IApiResponse<IInvoice[]>>;
 }
 
 export interface ShopinvaderProviderBaseOptions {

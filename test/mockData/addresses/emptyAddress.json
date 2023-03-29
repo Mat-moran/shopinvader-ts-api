@@ -2,7 +2,7 @@
   "size": 5,
   "data": [
     {
-      "id": "23",
+      "id": 23,
       "parent_id": 34,
       "type": "empty address never happen this is only to pass the test with green and be able to reuse code. The user should have at least one address",
       "display_name": "pepito manoliooo",

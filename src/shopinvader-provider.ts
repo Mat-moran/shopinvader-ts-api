@@ -168,65 +168,75 @@ export function createShopinvaderProvider({
       // console.log('data ---> ', data)
       return parse_cart_data(data);
     },
-    getAddresses: async (email: string) => {
-      const parsedEmail = z.string().email().safeParse(email);
-      if (parsedEmail.success === false) {
-        return {
-          message: 'Error',
-          success: false,
-          error: parsedEmail.error,
-          error_type: 'zod',
-        };
-      }
-      const res = await fetch(
-        erp_url_base_url + '/addresses' + '/',
-        fetchOptions({
-          website_unique_id: website_unique_id,
-          api_key: api_key,
-          email: parsedEmail.data,
+    getAddresses: async (email: string, schema: ZodSchema) => {
+      const fetch_cart = makeDomainFunction(z.string().email())(
+        // toda la logica de error en el fetch aqui!
+        async (email) => {
+          const res = await fetch(
+            erp_url_base_url + '/addresses' + '/',
+            fetchOptions({
+              website_unique_id: website_unique_id,
+              api_key: api_key,
+              email: email,
+            })
+          );
+          if (!res.ok) {
+            throw new Error('Some error')
+          }
+          return res
         })
-      );
-      // logica de errores al fechear la API, 200, 304, 400, 500
-      if (res.ok) {
-        return zodParse<IAddress[]>(z.array(ZAddress), await res.json());
-      } else {
-        return {
-          message: 'Error al tratar de conectar con el ERP',
-          success: res.ok,
-          error: res.status,
-          error_type: 'erp api',
-        };
+      const parse_cart_data = makeDomainFunction(schema)((data) => {
+        return data
+      })
+      const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
+        return data
+      })
+      const result = await fetch_cart(email)
+      if (!result.success) {
+        return result;
       }
+      const data = await result.data.json()
+      if (!data?.data) {
+        return parse_empty_cart(data)
+      }
+      // console.log('data ---> ', data)
+      return parse_cart_data(data);
+
     },
-    getCustomer: async (email: string) => {
-      const parsedEmail = z.string().email().safeParse(email);
-      if (parsedEmail.success === false) {
-        return {
-          message: 'Error',
-          success: false,
-          error: parsedEmail.error,
-          error_type: 'zod',
-        };
-      }
-      const res = await fetch(
-        erp_url_base_url + '/customer' + '/',
-        fetchOptions({
-          website_unique_id: website_unique_id,
-          api_key: api_key,
-          email: parsedEmail.data,
+    getCustomer: async (email: string, schema: ZodSchema) => {
+      const fetch_cart = makeDomainFunction(z.string().email())(
+        // toda la logica de error en el fetch aqui!
+        async (email) => {
+          const res = await fetch(
+            erp_url_base_url + '/customer' + '/',
+            fetchOptions({
+              website_unique_id: website_unique_id,
+              api_key: api_key,
+              email: email,
+            })
+          );
+          if (!res.ok) {
+            throw new Error('Some error')
+          }
+          return res
         })
-      );
-      // logica de errores al fechear la API, 200, 304, 400, 500
-      if (res.ok) {
-        return zodParse<ICustomer>(ZCustomer, await res.json());
-      } else {
-        return {
-          message: 'Error al tratar de conectar con el ERP',
-          success: res.ok,
-          error: res.status,
-          error_type: 'erp api',
-        };
+      const parse_cart_data = makeDomainFunction(schema)((data) => {
+        return data
+      })
+      const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
+        return data
+      })
+      const result = await fetch_cart(email)
+      if (!result.success) {
+        return result;
       }
+      const data = await result.data.json()
+      if (!data?.data) {
+        return parse_empty_cart(data)
+      }
+      // console.log('data ---> ', data)
+      return parse_cart_data(data);
+
     },
     getPickings: async (email: string) => {
       const parsedEmail = z.string().email().safeParse(email);
@@ -288,6 +298,7 @@ export function createShopinvaderProvider({
         return result;
       }
       const data = await result.data.json()
+      console.log('response inside getSales: \n\n\n', data)
       if (!data?.data) {
         return parse_empty_cart(data)
       }
