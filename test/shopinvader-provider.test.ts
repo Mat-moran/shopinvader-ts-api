@@ -111,4 +111,16 @@ describe('getCustomer method', () => {
 
 })
 
+describe('getInvoices method', () => {
+  const valid_invoices_schema = z.object({ data: z.array(z.object({ id: z.number() })) })
+  const invalid_invoices_schema = z.object({ data: z.object({ name: z.string(), idssss: z.string() }) })
+  const provider = createShopinvaderProvider({
+    erp_url_base_url: 'http://localhost:3000' as string,
+    website_unique_id: 'alsf',
+    api_key: "lkasjf",
+  })
+  apiMethodTest(provider, "getInvoices", valid_invoices_schema, invalid_invoices_schema)
+
+})
+
 

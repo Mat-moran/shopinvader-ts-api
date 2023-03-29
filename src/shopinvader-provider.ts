@@ -213,36 +213,30 @@ export function createShopinvaderProvider({
 
     },
     getPickings: async (email: string) => {
-      const parsedEmail = z.string().email().safeParse(email);
-      if (parsedEmail.success === false) {
-        return {
-          message: 'Error',
-          success: false,
-          error: parsedEmail.error,
-          error_type: 'zod',
-        };
-      }
+      const url = erp_url_base_url + '/stock_move' + '/'
+      const fetch_options = fetchOptions({
+        website_unique_id: website_unique_id,
+        api_key: api_key,
+        email: email,
+      })
 
-      const res = await fetch(
-        erp_url_base_url + '/stock_move' + '?per_page=500',
-        fetchOptions({
-          website_unique_id: website_unique_id,
-          api_key: api_key,
-          email: parsedEmail.data,
-        })
-      );
-
-      // logica de errores al fechear la API, 200, 304, 400, 500
-      if (res.ok) {
-        return zodParse<IPicking[]>(z.array(ZPicking), await res.json());
-      } else {
-        return {
-          message: 'Error al tratar de conectar con el ERP',
-          success: res.ok,
-          error: res.status,
-          error_type: 'erp api',
-        };
+      const parse_cart_data = makeDomainFunction(schema)((data) => {
+        return data
+      })
+      const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
+        return data
+      })
+      // const result = await fetch_cart(email)
+      const result = await fetch_endpoint(email, url, fetch_options)
+      if (!result.success) {
+        return result;
       }
+      const data = await result.data.json()
+      if (!data?.data) {
+        return parse_empty_cart(data)
+      }
+      // console.log('data ---> ', data)
+      return parse_cart_data(data);
     },
     getSales: async (email: string, schema: ZodSchema) => {
       const url = erp_url_base_url + '/sales' + '/'
@@ -269,35 +263,30 @@ export function createShopinvaderProvider({
       // console.log('data ---> ', data)
       return parse_cart_data(data);
     },
-    getInvoices: async (email: string) => {
-      const parsedEmail = z.string().email().safeParse(email);
-      if (parsedEmail.success === false) {
-        return {
-          message: 'Error',
-          success: false,
-          error: parsedEmail.error,
-          error_type: 'zod',
-        };
+    getInvoices: async (email: string, schema: ZodSchema) => {
+      const url = erp_url_base_url + '/invoices' + '/'
+      const fetch_options = fetchOptions({
+        website_unique_id: website_unique_id,
+        api_key: api_key,
+        email: email,
+      })
+      const parse_cart_data = makeDomainFunction(schema)((data) => {
+        return data
+      })
+      const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
+        return data
+      })
+
+      const result = await fetch_endpoint(email, url, fetch_options)
+      if (!result.success) {
+        return result;
       }
-      const res = await fetch(
-        erp_url_base_url + '/invoices?per_page=500',
-        fetchOptions({
-          website_unique_id: website_unique_id,
-          api_key: api_key,
-          email: parsedEmail.data,
-        })
-      );
-      // logica de errores al fechear la API, 200, 304, 400, 500
-      if (res.ok) {
-        return zodParse<IInvoice[]>(z.array(ZInvoice), await res.json());
-      } else {
-        return {
-          message: 'Error al tratar de conectar con el ERP',
-          success: res.ok,
-          error: res.status,
-          error_type: 'erp api',
-        };
+      const data = await result.data.json()
+      if (!data?.data) {
+        return parse_empty_cart(data)
       }
+      // console.log('data ---> ', data)
+      return parse_cart_data(data);
     },
   };
 }
