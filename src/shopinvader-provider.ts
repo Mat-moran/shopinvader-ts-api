@@ -1,3 +1,4 @@
+import { makeDomainFunction, inputFromForm } from 'domain-functions'
 import { z, ZodSchema, ZodError } from 'zod';
 import { zodParse } from './utils';
 import {
@@ -133,35 +134,46 @@ export function createShopinvaderProvider({
   };
 
   return {
-    getCart: async (email: string) => {
-      const parsedEmail = z.string().email().safeParse(email);
-      if (parsedEmail.success === false) {
-        return {
-          message: 'Error',
-          success: false,
-          error: parsedEmail.error,
-          error_type: 'zod',
-        };
-      }
-      const res = await fetch(
-        erp_url_base_url + '/cart' + '/',
-        fetchOptions({
-          website_unique_id: website_unique_id,
-          api_key: api_key,
-          email: parsedEmail.data,
+    getCart: async (email: string, schema: any) => {
+      const fetch_cart = makeDomainFunction(z.string().email())(
+        (email) => {
+          const res = fetch(
+            erp_url_base_url + '/cart' + '/',
+            fetchOptions({
+              website_unique_id: website_unique_id,
+              api_key: api_key,
+              email: email,
+            })
+          );
+          return res
         })
-      );
-      // logica de errores al fechear la API, 200, 304, 400, 500
-      if (res.ok) {
-        return zodParse<ICart>(ZCart, await res.json());
-      } else {
-        return {
-          message: 'Error al tratar de conectar con el ERP',
-          success: res.ok,
-          error: res.status,
-          error_type: 'erp api',
-        };
+      const parse_cart_data = makeDomainFunction(schema)((data) => {
+        return data
+      })
+      const parse_empty_cart = makeDomainFunction(z.object({}))((data) => {
+        return data
+      })
+
+
+      const result = await fetch_cart(email)
+      console.log('result ---> ', result)
+      if (!result.success) {
+        return result;
       }
+      if (result.data.status === 404) {
+        return {
+          success: false,
+          inputErrors: [],
+          environmentErrors: [{ 'message': "Unable to reach the endpoint /cart/" }],
+          errors: [],
+        }
+      }
+      const data = await result.data.json()
+      if (!data?.data) {
+        return parse_empty_cart(data)
+      }
+      // console.log('data ---> ', data)
+      return parse_cart_data(data);
     },
     getAddresses: async (email: string) => {
       const parsedEmail = z.string().email().safeParse(email);
