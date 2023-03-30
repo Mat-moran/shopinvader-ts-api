@@ -212,7 +212,7 @@ export function createShopinvaderProvider({
       return parse_cart_data(data);
 
     },
-    getPickings: async (email: string) => {
+    getPickings: async (email: string, schema: ZodSchema) => {
       const url = erp_url_base_url + '/stock_move' + '/'
       const fetch_options = fetchOptions({
         website_unique_id: website_unique_id,
