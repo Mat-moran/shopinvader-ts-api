@@ -1,115 +1,12 @@
-import { makeDomainFunction, inputFromForm } from 'domain-functions'
-import { z, ZodSchema, ZodError } from 'zod';
-import { fetch_endpoint, zodParse } from './utils';
+import { makeDomainFunction } from 'domain-functions'
+import { z, ZodSchema } from 'zod';
+import { fetch_endpoint } from './utils';
 import {
-  ICart,
   EcommerceProvider,
   PrivateShopinvaderFetchOptions,
   PublicShopinvaderFetchOptions,
   ShopinvaderProviderBaseOptions,
-  ZCart,
-  ZAddress,
-  IAddress,
-  ZCustomer,
-  ICustomer,
-  IPicking,
-  ZPicking,
-  ISale,
-  ZSale,
-  IInvoice,
-  ZInvoice,
 } from './shopinvader-boundary';
-
-// Types and interfaces
-
-export interface IPickingLoader {
-  picking: {
-    id: number;
-    name: string;
-  };
-  product: {
-    id: number;
-    name: string;
-  };
-  package?: {
-    id: number;
-    name: string;
-  };
-  order?: {
-    id: number;
-    name: string;
-    client_ref: string;
-  };
-  date: Date;
-  description: string;
-  origin: string;
-  qty_reserved: number;
-  qty_done: number;
-  dm_picking_status: {
-    code: string;
-    name: string;
-  };
-}
-
-export interface ILinesItem {
-  id: number;
-  name: string;
-  product: IProductItem;
-  amount: {
-    price: number;
-    untaxed: number;
-    tax: number;
-    total: number;
-    total_without_discount: number;
-  };
-  qty: number;
-  discount: {
-    rate: number;
-    value: number;
-  };
-  product_packaging: {
-    id: number;
-    name: string;
-    qty: number;
-    uom_id: string;
-  };
-}
-
-export interface ILines {
-  items: ILinesItem[];
-  count: number;
-  amount: {
-    tax: number;
-    untaxed: number;
-    total: number;
-  };
-}
-
-export interface ISaleLoader {
-  id: number;
-  date: Date;
-  amount: {
-    tax: number;
-    untaxed: number;
-    total: number;
-    discount_total: number;
-    total_without_discount: number;
-  };
-  shipping: {
-    address: IAddress;
-  };
-  invoicing: {
-    address: IAddress;
-  };
-  name: string;
-  state_label: string;
-  client_order_ref: string;
-  qty: number;
-  lines: ILines;
-  invoice_status: string;
-  picking_status: string;
-  invoices: { id: number; name: string; date: string }[];
-}
 
 // the implementation of the types of general purpose ecommerce-provider
 export function createShopinvaderProvider({
