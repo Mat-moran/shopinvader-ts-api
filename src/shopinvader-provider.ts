@@ -57,7 +57,7 @@ export function createShopinvaderProvider({
       return parse_cart_data(data);
     },
     getAddresses: async (email: string, schema: ZodSchema) => {
-      const url = erp_url_base_url + '/addresses' + '/'
+      const url = erp_url_base_url + '/addresses?per_page=500'
       const fetch_options = fetchOptions({
         website_unique_id: website_unique_id,
         api_key: api_key,
@@ -110,7 +110,7 @@ export function createShopinvaderProvider({
 
     },
     getPickings: async (email: string, schema: ZodSchema) => {
-      const url = erp_url_base_url + '/stock_move' + '/'
+      const url = erp_url_base_url + '/stock_move?per_page=500'
       const fetch_options = fetchOptions({
         website_unique_id: website_unique_id,
         api_key: api_key,
@@ -136,7 +136,7 @@ export function createShopinvaderProvider({
       return parse_cart_data(data);
     },
     getSales: async (email: string, schema: ZodSchema) => {
-      const url = erp_url_base_url + '/sales' + '/'
+      const url = erp_url_base_url + '/sales?per_page=500'
       const fetch_options = fetchOptions({
         website_unique_id: website_unique_id,
         api_key: api_key,
@@ -161,7 +161,7 @@ export function createShopinvaderProvider({
       return parse_cart_data(data);
     },
     getInvoices: async (email: string, schema: ZodSchema) => {
-      const url = erp_url_base_url + '/invoices' + '/'
+      const url = erp_url_base_url + '/invoices?per_page=500'
       const fetch_options = fetchOptions({
         website_unique_id: website_unique_id,
         api_key: api_key,
